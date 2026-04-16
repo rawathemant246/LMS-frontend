@@ -50,9 +50,13 @@ export const TEACHER_NAV: NavSection[] = [
     { name: "Exams", href: "/teacher/exams", icon: "FileText" },
     { name: "Gradebook", href: "/teacher/gradebook", icon: "BarChart3" },
   ]},
-  { section: "AI", items: [
+  { section: "INSIGHTS", items: [
+    { name: "Student Insights", href: "/teacher/insights", icon: "TrendingUp" },
     { name: "AI Assistant", href: "/teacher/ai-assistant", icon: "Brain" },
+  ]},
+  { section: "COMMUNICATION", items: [
     { name: "Announcements", href: "/teacher/announcements", icon: "Megaphone" },
+    { name: "Notifications", href: "/teacher/notifications", icon: "Bell" },
   ]},
 ];
 
@@ -65,10 +69,16 @@ export const STUDENT_NAV: NavSection[] = [
     { name: "Content", href: "/student/content", icon: "PlayCircle" },
     { name: "Assignments", href: "/student/assignments", icon: "PenTool" },
     { name: "Exams", href: "/student/exams", icon: "FileText" },
+    { name: "Timetable", href: "/student/timetable", icon: "Calendar" },
   ]},
-  { section: "AI", items: [
+  { section: "AI & PROGRESS", items: [
     { name: "AI Tutor", href: "/student/tutor", icon: "Brain" },
     { name: "My Progress", href: "/student/progress", icon: "TrendingUp" },
+    { name: "Report Cards", href: "/student/report-cards", icon: "Award" },
+  ]},
+  { section: "COMMUNICATION", items: [
+    { name: "Announcements", href: "/student/announcements", icon: "Megaphone" },
+    { name: "Notifications", href: "/student/notifications", icon: "Bell" },
   ]},
 ];
 
@@ -81,7 +91,10 @@ export const PARENT_NAV: NavSection[] = [
     { name: "Attendance", href: "/parent/attendance", icon: "ClipboardCheck" },
     { name: "Academics", href: "/parent/academics", icon: "GraduationCap" },
     { name: "Fees", href: "/parent/fees", icon: "IndianRupee" },
-    { name: "Communication", href: "/parent/communication", icon: "MessageSquare" },
+  ]},
+  { section: "COMMUNICATION", items: [
+    { name: "Announcements", href: "/parent/communication", icon: "MessageSquare" },
+    { name: "Notifications", href: "/parent/notifications", icon: "Bell" },
   ]},
 ];
 

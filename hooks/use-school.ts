@@ -1,6 +1,7 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 export function useSchoolStudents() {
   return useQuery({
@@ -27,5 +28,17 @@ export function useCurrentAcademicYear() {
   return useQuery({
     queryKey: ["school", "academic-year", "current"],
     queryFn: () => api.get<any>("/api/v1/academic-years/current"),
+  });
+}
+
+export function useUpdateSchoolProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => api.post("/api/v1/school/profile", data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["school", "profile"] });
+      toast.success("School profile updated");
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
