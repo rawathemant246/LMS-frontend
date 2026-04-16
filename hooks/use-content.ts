@@ -1,6 +1,7 @@
 "use client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, API_BASE } from "@/lib/api";
+import { getCookie } from "@/lib/auth";
 import { toast } from "sonner";
 
 export function useChapters(subjectId?: string) {
@@ -82,12 +83,20 @@ export function useUploadDirect() {
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
-      const token = document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
+      const token = getCookie("access_token") || "";
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/uploads/direct`,
+        `${API_BASE}/api/v1/uploads/direct`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData }
       );
-      if (!res.ok) throw new Error("Upload failed");
+      if (res.status === 401) {
+        document.cookie = "access_token=; path=/; max-age=0";
+        window.location.href = "/login";
+        throw new Error("Unauthorized");
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Upload failed" }));
+        throw new Error(body?.error || body?.detail || "Upload failed");
+      }
       return res.json();
     },
     onError: (err: Error) => toast.error(err.message),

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { getCookie } from "@/lib/auth";
+import { API_BASE } from "@/lib/api";
 import { motion, type Variants } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -399,11 +401,9 @@ function ReportCardsTab({
 
   const handleViewPdf = async (id: string) => {
     const token =
-      document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
+      getCookie("access_token") || "";
     const res = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
-      }/api/v1/report-cards/${id}/pdf`,
+      `${API_BASE}/api/v1/report-cards/${id}/pdf`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -424,7 +424,7 @@ function ReportCardsTab({
 
   const handleDownloadPdf = async (id: string) => {
     const token =
-      document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
+      getCookie("access_token") || "";
     const url = `${
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
     }/api/v1/report-cards/${id}/pdf`;

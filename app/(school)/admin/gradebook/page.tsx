@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef } from "react";
+import { getCookie } from "@/lib/auth";
+import { API_BASE } from "@/lib/api";
 import { PageHeader } from "@/components/layout/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -940,9 +942,9 @@ function ReportCardsTab() {
 
   const handleDownloadPdf = async (reportCardId: string) => {
     try {
-      const token = document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
+      const token = getCookie("access_token") || "";
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/report-cards/${reportCardId}/pdf`,
+        `${API_BASE}/api/v1/report-cards/${reportCardId}/pdf`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error("Download failed");

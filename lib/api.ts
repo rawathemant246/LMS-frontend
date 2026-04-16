@@ -1,4 +1,6 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+import { getCookie } from "./auth";
+
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 export class ApiError extends Error {
   constructor(public status: number, public body: any) {
@@ -7,15 +9,11 @@ export class ApiError extends Error {
 }
 
 function getToken(): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(/access_token=([^;]+)/);
-  return match ? match[1] : null;
+  return getCookie("access_token");
 }
 
 function getRefreshToken(): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(/refresh_token=([^;]+)/);
-  return match ? match[1] : null;
+  return getCookie("refresh_token");
 }
 
 let refreshPromise: Promise<boolean> | null = null;
