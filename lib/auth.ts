@@ -23,7 +23,15 @@ export async function login(username: string, password: string): Promise<LoginRe
   useUserStore.getState().setUser(res.user);
 
   // Detect role and store in school store
-  const role = detectRole(res.user.role_id);
+  // Try to enrich with role name from /me endpoint to avoid privilege escalation via unknown role_id
+  let roleName: string | undefined;
+  try {
+    const me = await api.get<any>("/auth/api/v1/auth/me");
+    roleName = me?.role_name ?? me?.role?.name ?? me?.role ?? undefined;
+  } catch {
+    // Non-fatal: proceed without role name; detectRole will use role_id only
+  }
+  const role = detectRole(res.user.role_id, roleName);
   useSchoolStore.getState().setRole(role);
 
   // If not super_admin, fetch school profile

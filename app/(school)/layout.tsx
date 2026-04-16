@@ -8,7 +8,7 @@ import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 // Helper to convert hex to RGB
 function hexToRgb(hex: string): string {
-  if (!hex || !hex.startsWith("#")) return "";
+  if (!hex || !/^#[0-9a-fA-F]{6}$/.test(hex)) return "";
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
@@ -25,12 +25,22 @@ export default function SchoolLayout({ children }: { children: React.ReactNode }
         const branding = parsed?.state?.school?.branding;
         if (branding) {
           const root = document.documentElement;
-          if (branding.primary_color) root.style.setProperty("--brand-primary", hexToRgb(branding.primary_color));
-          if (branding.accent_color) root.style.setProperty("--brand-accent", hexToRgb(branding.accent_color));
-          if (branding.sidebar_color) root.style.setProperty("--brand-sidebar-bg", hexToRgb(branding.sidebar_color));
+          const primaryRgb = hexToRgb(branding.primary_color);
+          if (primaryRgb) root.style.setProperty("--brand-primary", primaryRgb);
+          const accentRgb = hexToRgb(branding.accent_color);
+          if (accentRgb) root.style.setProperty("--brand-accent", accentRgb);
+          const sidebarRgb = hexToRgb(branding.sidebar_color);
+          if (sidebarRgb) root.style.setProperty("--brand-sidebar-bg", sidebarRgb);
         }
       }
     } catch {}
+
+    return () => {
+      const root = document.documentElement;
+      root.style.removeProperty("--brand-primary");
+      root.style.removeProperty("--brand-accent");
+      root.style.removeProperty("--brand-sidebar-bg");
+    };
   }, []);
 
   return (

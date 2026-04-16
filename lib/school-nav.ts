@@ -91,6 +91,7 @@ export function getNavForRole(role: string): NavSection[] {
     case "teacher": return TEACHER_NAV;
     case "student": return STUDENT_NAV;
     case "parent": return PARENT_NAV;
-    default: return ADMIN_NAV;
+    case "unknown": return [];
+    default: return [];
   }
 }
