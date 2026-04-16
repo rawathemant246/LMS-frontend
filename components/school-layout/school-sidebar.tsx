@@ -74,8 +74,9 @@ export function SchoolSidebar() {
 
   const school = useSchoolStore((s) => s.school);
   const role = useSchoolStore((s) => s.role);
+  const permissions = useSchoolStore((s) => s.permissions);
 
-  const navGroups = getNavForRole(role ?? "admin");
+  const navGroups = getNavForRole(role ?? "unknown");
   const schoolName = school?.name ?? "EduPulse";
   const logoUrl = school?.logo_url ?? null;
 
@@ -126,7 +127,9 @@ export function SchoolSidebar() {
               )}
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {group.items.map((item) => {
+                  {group.items
+                    .filter((item) => !item.permission || permissions.includes(item.permission))
+                    .map((item) => {
                     const Icon = iconMap[item.icon];
                     const isActive =
                       item.href.endsWith("/dashboard")

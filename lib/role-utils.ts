@@ -10,7 +10,9 @@ export function detectRole(roleId: number | null, roleName?: string): string {
     if (lower.includes("accountant")) return "accountant";
   }
   if (roleId === 1) return "super_admin";
-  return "admin";
+  // For all other role_ids, we need the role name
+  // Default to "unknown" (not "admin") to prevent privilege escalation
+  return "unknown";
 }
 
 export function getRoleDashboardPath(role: string): string {
@@ -20,7 +22,8 @@ export function getRoleDashboardPath(role: string): string {
     case "teacher": return "/teacher/dashboard";
     case "student": return "/student/dashboard";
     case "parent": return "/parent/dashboard";
-    default: return "/admin/dashboard";
+    case "unknown": return "/login"; // Force re-login or show error
+    default: return "/login";
   }
 }
 
