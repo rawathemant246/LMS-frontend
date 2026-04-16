@@ -64,7 +64,7 @@ export function OrgTable({ data, isLoading }: OrgTableProps) {
               filtered.map((org) => (
                 <TableRow key={org.organization_id} className="cursor-pointer hover:bg-gray-50">
                   <TableCell>
-                    <Link href={`/dashboard/organizations/${org.organization_id}`} className="font-medium text-brand-primary hover:underline">
+                    <Link href={`/organizations/${org.organization_id}`} className="font-medium text-brand-primary hover:underline">
                       {org.organization_name}
                     </Link>
                   </TableCell>

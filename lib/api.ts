@@ -12,6 +12,44 @@ function getToken(): string | null {
   return match ? match[1] : null;
 }
 
+function getRefreshToken(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/refresh_token=([^;]+)/);
+  return match ? match[1] : null;
+}
+
+let refreshPromise: Promise<boolean> | null = null;
+
+async function tryRefreshToken(): Promise<boolean> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return false;
+
+  // Deduplicate concurrent refresh attempts
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/api/v1/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      const isSecure = window.location.protocol === "https:";
+      document.cookie = `access_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Strict${isSecure ? "; Secure" : ""}`;
+      document.cookie = `refresh_token=${data.tokens.refresh_token}; path=/; max-age=${60 * 60 * 24 * 14}; SameSite=Strict${isSecure ? "; Secure" : ""}`;
+      return true;
+    } catch {
+      return false;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
@@ -22,14 +60,25 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  let res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers,
   });
 
+  // On 401, try refreshing the token once
+  if (res.status === 401) {
+    const refreshed = await tryRefreshToken();
+    if (refreshed) {
+      const newToken = getToken();
+      if (newToken) headers["Authorization"] = `Bearer ${newToken}`;
+      res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+    }
+  }
+
   if (res.status === 401) {
     if (typeof window !== "undefined") {
       document.cookie = "access_token=; path=/; max-age=0";
+      document.cookie = "refresh_token=; path=/; max-age=0";
       window.location.href = "/login";
     }
     throw new ApiError(401, { error: "Unauthorized" });

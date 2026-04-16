@@ -68,9 +68,7 @@ export function TopBar() {
             <Bell className="h-4 w-4" />
             <span className="sr-only">Notifications</span>
           </Button>
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#F97316] text-[10px] font-semibold text-white">
-            3
-          </span>
+          {/* Badge removed: no real notification count yet */}
         </div>
 
         {/* Avatar dropdown */}

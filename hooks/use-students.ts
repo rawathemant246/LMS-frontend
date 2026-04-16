@@ -48,17 +48,27 @@ export function useValidateImport() {
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
+
+      const token = document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || ""}/api/v1/students/import/validate`,
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/students/import/validate`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${document.cookie.match(/access_token=([^;]+)/)?.[1] || ""}`,
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         }
       );
-      if (!res.ok) throw new Error("Validation failed");
+      if (res.status === 401) {
+        document.cookie = "access_token=; path=/; max-age=0";
+        window.location.href = "/login";
+        throw new Error("Unauthorized");
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Validation failed" }));
+        throw new Error(body?.error || body?.detail || "Validation failed");
+      }
       return res.json();
     },
     onError: (err: Error) => toast.error(err.message),
