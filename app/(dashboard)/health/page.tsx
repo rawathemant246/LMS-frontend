@@ -5,12 +5,14 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+
 function useServiceHealth(name: string, url: string) {
   return useQuery({
     queryKey: ["health", name],
     queryFn: async () => {
       try {
-        const res = await fetch(url);
+        const res = await fetch(`${API_BASE}${url}`);
         return res.ok;
       } catch {
         return false;

@@ -19,6 +19,7 @@ export async function login(username: string, password: string): Promise<LoginRe
 }
 
 export function logout() {
+  useUserStore.getState().clearUser();
   document.cookie = "access_token=; path=/; max-age=0";
   window.location.href = "/login";
 }
