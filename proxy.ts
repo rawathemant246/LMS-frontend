@@ -17,11 +17,16 @@ function getRoleFromPayload(payload: any): string | null {
 
   if (roleName) {
     const lower = roleName.toLowerCase();
-    if (lower === "super_admin" || lower.includes("super")) return "super_admin";
-    if (lower.includes("principal") || lower.includes("admin")) return "admin";
-    if (lower.includes("teacher")) return "teacher";
-    if (lower.includes("student")) return "student";
-    if (lower.includes("parent")) return "parent";
+    const exactRoles: Record<string, string> = {
+      super_admin: "super_admin",
+      admin: "admin",
+      principal: "admin",
+      school_admin: "admin",
+      teacher: "teacher",
+      student: "student",
+      parent: "parent",
+    };
+    if (exactRoles[lower]) return exactRoles[lower];
   }
   if (roleId === 1) return "super_admin";
   return null;
@@ -72,13 +77,13 @@ export function proxy(request: NextRequest) {
         teacher: ["/teacher"],
         student: ["/student"],
         parent: ["/parent"],
-        super_admin: ["/dashboard", "/schools", "/admin"],
+        super_admin: ["/dashboard", "/schools", "/organizations", "/users", "/analytics", "/billing", "/support", "/audit", "/health", "/notifications", "/settings"],
       };
 
       const allowed = rolePrefixes[role] ?? [];
 
       // Check if the path is role-specific (prefixed with a known role route)
-      const allRolePrefixes = ["/admin", "/teacher", "/student", "/parent", "/dashboard", "/schools"];
+      const allRolePrefixes = ["/admin", "/teacher", "/student", "/parent", "/dashboard", "/schools", "/organizations", "/users", "/analytics", "/billing", "/support", "/audit", "/health", "/notifications", "/settings"];
       const isRoleSpecificPath = allRolePrefixes.some(
         (p) => pathname === p || pathname.startsWith(p + "/")
       );

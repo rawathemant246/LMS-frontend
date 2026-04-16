@@ -2,16 +2,19 @@ export function detectRole(roleId: number | null, roleName?: string): string {
   if (!roleId) return "unknown";
   if (roleName) {
     const lower = roleName.toLowerCase();
-    if (lower === "super_admin" || lower.includes("super")) return "super_admin";
-    if (lower.includes("principal") || lower.includes("admin")) return "admin";
-    if (lower.includes("teacher")) return "teacher";
-    if (lower.includes("student")) return "student";
-    if (lower.includes("parent")) return "parent";
-    if (lower.includes("accountant")) return "accountant";
+    const exactRoles: Record<string, string> = {
+      super_admin: "super_admin",
+      admin: "admin",
+      principal: "admin",
+      school_admin: "admin",
+      teacher: "teacher",
+      student: "student",
+      parent: "parent",
+      accountant: "accountant",
+    };
+    if (exactRoles[lower]) return exactRoles[lower];
   }
   if (roleId === 1) return "super_admin";
-  // For all other role_ids, we need the role name
-  // Default to "unknown" (not "admin") to prevent privilege escalation
   return "unknown";
 }
 

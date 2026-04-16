@@ -68,9 +68,7 @@ export function SchoolTopbar() {
             <Bell className="h-4 w-4" />
             <span className="sr-only">Notifications</span>
           </Button>
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[rgb(var(--brand-primary,249_115_22))] text-[10px] font-semibold text-white">
-            3
-          </span>
+          {/* Badge removed: no real notification count yet */}
         </div>
 
         {/* Avatar dropdown */}

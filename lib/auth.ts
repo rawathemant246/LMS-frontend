@@ -15,9 +15,10 @@ export async function login(username: string, password: string): Promise<LoginRe
     password,
   });
 
-  // Store token in cookie
+  // Store tokens
   const isSecure = window.location.protocol === "https:";
   document.cookie = `access_token=${res.tokens.access_token}; path=/; max-age=${res.tokens.expires_in}; SameSite=Strict${isSecure ? "; Secure" : ""}`;
+  document.cookie = `refresh_token=${res.tokens.refresh_token}; path=/; max-age=${60 * 60 * 24 * 14}; SameSite=Strict${isSecure ? "; Secure" : ""}`;
 
   // Store user in Zustand
   useUserStore.getState().setUser(res.user);
@@ -62,10 +63,12 @@ export function logout() {
   useUserStore.getState().clearUser();
   useSchoolStore.getState().clearSchool();
   document.cookie = "access_token=; path=/; max-age=0";
+  document.cookie = "refresh_token=; path=/; max-age=0";
   window.location.href = "/login";
 }
 
 export function isAuthenticated(): boolean {
   if (typeof document === "undefined") return false;
-  return document.cookie.includes("access_token=");
+  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]+)/);
+  return !!match && match[1].length > 0;
 }
