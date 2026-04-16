@@ -2,7 +2,7 @@
 
 ## Goal
 
-Build 8 Student Dashboard pages — student's learning hub with content browsing, assignment submission, online exams, AI Tutor chat, and progress tracking.
+Build 11 Student Dashboard pages — student's learning hub with content browsing, assignment submission, online exams, AI Tutor chat, progress tracking, timetable, announcements, report cards, and notifications.
 
 ## Context
 
@@ -223,7 +223,64 @@ Same tree structure as teacher content page but:
 
 ---
 
-## Page 8: Student Exams Results (embedded in exams page)
+## Page 8: Timetable (`/student/timetable`)
+
+**Layout**: Read-only weekly grid showing student's class-section timetable
+
+- Same grid as teacher timetable but simpler — just one section
+- Auto-loads student's `current_section_id` timetable
+- Grid: rows = periods, columns = Mon-Sat
+- Cells: subject name + teacher name, color-coded by subject
+- Break/lunch rows as separator bars
+- Current day column highlighted, current period glowing
+- No selectors needed — single section view
+
+**API hooks**: `usePeriodDefinitions()`, `useSectionTimetable(sectionId)` from `hooks/use-timetable.ts`
+
+---
+
+## Page 9: Announcements (`/student/announcements`)
+
+**Layout**: Read-only announcement card list
+
+- Shows announcements scoped to: school-wide, student's class, student's section
+- Each card: title, body preview (2 lines), scope badge, published date, ack button if `requires_ack`
+- Click card → view full announcement
+- Acknowledge button → `POST /api/v1/announcements/{id}/ack`
+- No create/edit — students are read-only consumers
+
+**API hooks**: `useAnnouncements()` from `hooks/use-announcements.ts`
+
+---
+
+## Page 10: Report Cards (`/student/report-cards`)
+
+**Layout**: Report card list with PDF viewer
+
+- List of student's report cards from `GET /students/{id}/report-cards`
+- Each row: academic year, term/exam name, generated date, status badge
+- "View" button → dialog with embedded PDF viewer (`<object>` tag with blob URL)
+- "Download" button → opens PDF in new tab
+- Empty state if no report cards generated yet
+
+**API hooks**: `useStudentReportCards(studentId)`, `useReportCardPdf(reportCardId)` from `hooks/use-gradebook.ts`
+
+---
+
+## Page 11: Notifications (`/student/notifications`)
+
+**Layout**: Same as teacher notifications page
+
+- Notification list sorted newest first
+- Read/unread indicators, click to mark read
+- "Mark All Read" button
+- Type-based icons (info/warning/success)
+
+**API hooks**: Reuses `useNotifications`, `useMarkNotificationRead`, `useMarkAllNotificationsRead` from `hooks/use-notifications.ts`
+
+---
+
+## Student Exam Results (embedded in exams page, not separate route)
 
 After exam completion, students see their results:
 - Score breakdown per section
@@ -231,7 +288,35 @@ After exam completion, students see their results:
 - Question-wise marks (for graded questions)
 - Teacher feedback (if any)
 
-This is a sub-view of the exams page, not a separate route.
+---
+
+## Nav Update
+
+Update `STUDENT_NAV` in `lib/school-nav.ts`:
+
+```typescript
+export const STUDENT_NAV: NavSection[] = [
+  { section: null, items: [
+    { name: "Dashboard", href: "/student/dashboard", icon: "LayoutDashboard" },
+    { name: "My Classes", href: "/student/classes", icon: "BookOpen" },
+  ]},
+  { section: "LEARNING", items: [
+    { name: "Content", href: "/student/content", icon: "PlayCircle" },
+    { name: "Assignments", href: "/student/assignments", icon: "PenTool" },
+    { name: "Exams", href: "/student/exams", icon: "FileText" },
+    { name: "Timetable", href: "/student/timetable", icon: "Calendar" },
+  ]},
+  { section: "AI & PROGRESS", items: [
+    { name: "AI Tutor", href: "/student/tutor", icon: "Brain" },
+    { name: "My Progress", href: "/student/progress", icon: "TrendingUp" },
+    { name: "Report Cards", href: "/student/report-cards", icon: "Award" },
+  ]},
+  { section: "COMMUNICATION", items: [
+    { name: "Announcements", href: "/student/announcements", icon: "Megaphone" },
+    { name: "Notifications", href: "/student/notifications", icon: "Bell" },
+  ]},
+];
+```
 
 ---
 
@@ -246,12 +331,19 @@ app/(school)/student/
   exams/page.tsx              ← NEW (includes fullscreen exam mode)
   tutor/page.tsx              ← NEW (premium warm cream design)
   progress/page.tsx           ← NEW
+  timetable/page.tsx          ← NEW
+  announcements/page.tsx      ← NEW
+  report-cards/page.tsx       ← NEW
+  notifications/page.tsx      ← NEW
 
 hooks/
   use-student-context.ts      ← NEW
   use-student-exam.ts         ← NEW
   use-tutor.ts                ← NEW
-  (reuses: use-content.ts, use-assignments.ts, use-student-insights.ts, use-announcements.ts)
+  (reuses: use-content.ts, use-assignments.ts, use-student-insights.ts, use-announcements.ts, use-gradebook.ts, use-notifications.ts, use-timetable.ts)
+
+lib/
+  school-nav.ts               ← MODIFY (update STUDENT_NAV with 4 new items)
 ```
 
 ## Animations
