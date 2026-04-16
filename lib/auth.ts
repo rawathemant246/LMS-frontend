@@ -8,7 +8,8 @@ export async function login(username: string, password: string): Promise<LoginRe
   });
 
   // Store token in cookie
-  document.cookie = `access_token=${res.tokens.access_token}; path=/; max-age=${res.tokens.expires_in}; SameSite=Strict`;
+  const isSecure = window.location.protocol === "https:";
+  document.cookie = `access_token=${res.tokens.access_token}; path=/; max-age=${res.tokens.expires_in}; SameSite=Strict${isSecure ? "; Secure" : ""}`;
 
   return res;
 }

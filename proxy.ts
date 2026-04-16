@@ -5,28 +5,18 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get("access_token");
   const { pathname } = request.nextUrl;
 
-  // Auth pages
-  if (pathname === "/login" || pathname === "/forgot-password") {
-    if (token) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-    return NextResponse.next();
-  }
+  // Protect everything except auth pages and static assets
+  const publicPaths = ["/login", "/forgot-password"];
+  const isPublicPath = publicPaths.some(p => pathname === p || pathname.startsWith(p));
 
-  // Dashboard pages
-  if (pathname.startsWith("/dashboard")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Root redirect
-  if (pathname === "/") {
-    if (token) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+  if (!token && !isPublicPath) {
+    // No token and not on a public page → redirect to login
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (token && isPublicPath) {
+    // Has token but on login page → redirect to dashboard
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();

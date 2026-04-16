@@ -6,13 +6,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PlanCard } from "@/components/billing/plan-card";
 import { InvoiceTable } from "@/components/billing/invoice-table";
 import { RevenueChart } from "@/components/dashboard/revenue-chart";
-import { useBillingPlans, useInvoices, useRevenueStats } from "@/hooks/use-billing";
+import { useBillingPlans, useInvoices } from "@/hooks/use-billing";
+import { useRevenueData } from "@/hooks/use-dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BillingPage() {
   const { data: plans, isLoading: plansLoading } = useBillingPlans();
   const { data: invoicesData, isLoading: invoicesLoading } = useInvoices();
-  const { data: revenue, isLoading: revenueLoading } = useRevenueStats();
+  const { data: revenue, isLoading: revenueLoading } = useRevenueData();
 
   return (
     <div>
