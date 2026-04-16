@@ -91,7 +91,10 @@ export const PARENT_NAV: NavSection[] = [
     { name: "Attendance", href: "/parent/attendance", icon: "ClipboardCheck" },
     { name: "Academics", href: "/parent/academics", icon: "GraduationCap" },
     { name: "Fees", href: "/parent/fees", icon: "IndianRupee" },
-    { name: "Communication", href: "/parent/communication", icon: "MessageSquare" },
+  ]},
+  { section: "COMMUNICATION", items: [
+    { name: "Announcements", href: "/parent/communication", icon: "MessageSquare" },
+    { name: "Notifications", href: "/parent/notifications", icon: "Bell" },
   ]},
 ];
 
