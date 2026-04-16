@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import { getCookie } from "@/lib/auth";
+import { API_BASE } from "@/lib/api";
 import { motion, type Variants } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -295,11 +297,9 @@ export default function StudentReportCardsPage() {
 
   const fetchPdf = useCallback(async (reportCardId: string): Promise<string | null> => {
     const token =
-      document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
+      getCookie("access_token") || "";
     const res = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
-      }/api/v1/report-cards/${reportCardId}/pdf`,
+      `${API_BASE}/api/v1/report-cards/${reportCardId}/pdf`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

@@ -1,6 +1,7 @@
 "use client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, API_BASE } from "@/lib/api";
+import { getCookie } from "@/lib/auth";
 import { toast } from "sonner";
 
 export function useGradeScales() {
@@ -51,9 +52,9 @@ export function useReportCardPdf(reportCardId?: string) {
   return useQuery({
     queryKey: ["report-card-pdf", reportCardId],
     queryFn: async () => {
-      const token = document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
+      const token = getCookie("access_token") || "";
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/report-cards/${reportCardId}/pdf`,
+        `${API_BASE}/api/v1/report-cards/${reportCardId}/pdf`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.status === 401) {

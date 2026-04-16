@@ -67,8 +67,25 @@ export function logout() {
   window.location.href = "/login";
 }
 
+/** Parse a cookie value by name from document.cookie */
+export function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const cookies = document.cookie.split(";");
+  for (const cookie of cookies) {
+    const [key, ...rest] = cookie.split("=");
+    if (key.trim() === name) {
+      const value = rest.join("=").trim();
+      try {
+        return decodeURIComponent(value);
+      } catch {
+        return value;
+      }
+    }
+  }
+  return null;
+}
+
 export function isAuthenticated(): boolean {
-  if (typeof document === "undefined") return false;
-  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]+)/);
-  return !!match && match[1].length > 0;
+  const token = getCookie("access_token");
+  return !!token && token.length > 0;
 }

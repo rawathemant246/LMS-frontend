@@ -9,13 +9,18 @@ export function useStudentProfile() {
   return useQuery({
     queryKey: ["student-profile", userId],
     queryFn: async () => {
-      const data = await api.get<any>("/api/v1/students?per_page=100");
+      // TODO: Replace with /api/v1/students/me endpoint when available
+      const data = await api.get<any>("/api/v1/students?per_page=500");
       const students = Array.isArray(data) ? data : data?.data?.items ?? data?.data ?? data?.items ?? [];
-      return students.find((s: any) =>
+      const profile = students.find((s: any) =>
         s.auth_user_id === userId ||
         s.user_id === userId ||
         String(s.auth_user_id) === String(userId)
       ) ?? null;
+      if (!profile) {
+        console.warn(`[useStudentProfile] No student profile found for auth user ${userId}`);
+      }
+      return profile;
     },
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,

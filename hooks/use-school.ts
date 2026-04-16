@@ -6,7 +6,7 @@ import { toast } from "sonner";
 export function useSchoolStudents() {
   return useQuery({
     queryKey: ["school", "students"],
-    queryFn: () => api.get<any>("/api/v1/students?per_page=1"),
+    queryFn: () => api.get<any>("/api/v1/students?per_page=100"),
   });
 }
 

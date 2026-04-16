@@ -1,6 +1,7 @@
 "use client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, API_BASE } from "@/lib/api";
+import { getCookie } from "@/lib/auth";
 import { toast } from "sonner";
 
 export function useStudents(classId?: string, sectionId?: string, page = 1) {
@@ -49,9 +50,9 @@ export function useValidateImport() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const token = document.cookie.match(/access_token=([^;]+)/)?.[1] || "";
+      const token = getCookie("access_token") || "";
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/students/import/validate`,
+        `${API_BASE}/api/v1/students/import/validate`,
         {
           method: "POST",
           headers: {

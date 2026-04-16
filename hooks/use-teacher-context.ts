@@ -10,14 +10,18 @@ export function useTeacherProfile() {
   return useQuery({
     queryKey: ["teacher-profile", userId],
     queryFn: async () => {
-      // No /teachers/me endpoint exists; fetch list and match by auth_user_id
-      const data = await api.get<any>("/api/v1/teachers");
+      // TODO: Replace with /api/v1/teachers/me endpoint when available
+      const data = await api.get<any>("/api/v1/teachers?per_page=500");
       const teachers = Array.isArray(data) ? data : data?.data?.items ?? data?.data ?? data?.items ?? [];
-      return teachers.find((t: any) =>
+      const profile = teachers.find((t: any) =>
         t.auth_user_id === userId ||
         t.user_id === userId ||
         String(t.auth_user_id) === String(userId)
       ) ?? null;
+      if (!profile) {
+        console.warn(`[useTeacherProfile] No teacher profile found for auth user ${userId}`);
+      }
+      return profile;
     },
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // Cache for 5 min to avoid repeated fetches
