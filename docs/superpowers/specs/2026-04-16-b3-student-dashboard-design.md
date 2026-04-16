@@ -162,11 +162,11 @@ Same tree structure as teacher content page but:
 
 ## Page 6: AI Tutor (`/student/tutor`)
 
-**THE SIGNATURE STUDENT PAGE — premium design, warm cream theme**
+**THE SIGNATURE STUDENT PAGE — Visionary-style warm dark glass morphism.**
 
 **Layout**: Chat-first with expandable context sidebar
 
-**Design**: Warm cream background (#FEFCF9) with indigo message bubbles, cream borders (#f0ebe3), soft shadows. Cozy study room feel.
+**Design**: Deep near-black background (#0e0e16) with warm peach/sand ambient glow (large blurred radial gradient from upper center, rgba(200,140,90,0.22)). Frosted glass sidebar and context panel (backdrop-filter: blur(40px)). Muted sand/camel accent (#c8956c). User bubbles = warm sand tinted translucent (rgba(200,149,108,0.14)). AI bubbles = ultra-subtle white glass (rgba(255,255,255,0.04)). Hint cards in warm sand tint. Input area with context tags, mic button, gradient send button. Inline content cards in chat messages. Matches the Visionary 2.0 aesthetic — see `.superpowers/brainstorm/9604-1776348467/content/ai-tutor-final.html` for exact HTML/CSS reference to replicate.
 
 **Chat area (main)**:
 - Header: tutor avatar (gradient indigo rounded square, brain emoji), "EduPulse AI Tutor", online status, session info
