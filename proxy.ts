@@ -9,8 +9,12 @@ export function proxy(request: NextRequest) {
   const publicPaths = ["/login", "/forgot-password"];
   const isPublicPath = publicPaths.some(p => pathname === p || pathname.startsWith(p));
 
+  // School role routes that require a token
+  const schoolPaths = ["/admin", "/teacher", "/student", "/parent"];
+  const isSchoolPath = schoolPaths.some(p => pathname === p || pathname.startsWith(p + "/"));
+
   if (!token && !isPublicPath) {
-    // No token and not on a public page → redirect to login
+    // No token and not on a public page (includes /admin, /teacher, /student, /parent) → redirect to login
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

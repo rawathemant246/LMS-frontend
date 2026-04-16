@@ -34,8 +34,9 @@ export default function LoginPage() {
   async function onSubmit(data: FormValues) {
     setServerError(null);
     try {
-      await login(data.username, data.password);
-      router.push("/dashboard");
+      const { res, redirectPath } = await login(data.username, data.password);
+      void res;
+      router.push(redirectPath);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setServerError(err.message);
