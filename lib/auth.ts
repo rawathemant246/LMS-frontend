@@ -1,0 +1,24 @@
+import { api } from "./api";
+import type { LoginResponse } from "./api-types";
+
+export async function login(username: string, password: string): Promise<LoginResponse> {
+  const res = await api.post<LoginResponse>("/auth/api/v1/auth/login", {
+    username,
+    password,
+  });
+
+  // Store token in cookie
+  document.cookie = `access_token=${res.tokens.access_token}; path=/; max-age=${res.tokens.expires_in}; SameSite=Strict`;
+
+  return res;
+}
+
+export function logout() {
+  document.cookie = "access_token=; path=/; max-age=0";
+  window.location.href = "/login";
+}
+
+export function isAuthenticated(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.includes("access_token=");
+}

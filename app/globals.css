@@ -8,7 +8,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -46,16 +46,51 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Brand colors exposed as Tailwind utilities */
+  --color-brand-primary: rgb(var(--brand-primary));
+  --color-brand-primary-hover: rgb(var(--brand-primary-hover));
+  --color-brand-primary-light: rgb(var(--brand-primary-light));
+  --color-brand-accent: rgb(var(--brand-accent));
+  --color-brand-accent-hover: rgb(var(--brand-accent-hover));
+  --color-brand-accent-light: rgb(var(--brand-accent-light));
+  --color-brand-success: rgb(var(--brand-success));
+  --color-brand-warning: rgb(var(--brand-warning));
+  --color-brand-danger: rgb(var(--brand-danger));
+  --color-brand-sidebar-bg: rgb(var(--brand-sidebar-bg));
+  --color-brand-sidebar-text: rgb(var(--brand-sidebar-text));
 }
 
 :root {
+  /* Brand Design Tokens */
+
+  /* Primary: Deep Indigo */
+  --brand-primary: 79 70 229;         /* #4F46E5 */
+  --brand-primary-hover: 67 56 202;   /* #4338CA */
+  --brand-primary-light: 238 242 255; /* #EEF2FF */
+
+  /* Accent: Vibrant Orange */
+  --brand-accent: 249 115 22;         /* #F97316 */
+  --brand-accent-hover: 234 88 12;    /* #EA580C */
+  --brand-accent-light: 255 247 237;  /* #FFF7ED */
+
+  /* Sidebar */
+  --brand-sidebar-bg: 30 27 75;       /* #1E1B4B */
+  --brand-sidebar-text: 224 231 255;  /* #E0E7FF */
+
+  /* Semantic */
+  --brand-success: 16 185 129;        /* #10B981 */
+  --brand-warning: 245 158 11;        /* #F59E0B */
+  --brand-danger: 239 68 68;          /* #EF4444 */
+
+  /* shadcn base variables */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.506 0.194 281.1); /* Mapped to our indigo #4F46E5 */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -90,7 +125,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(0.64 0.194 281.1); /* Lighter indigo for dark mode */
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
