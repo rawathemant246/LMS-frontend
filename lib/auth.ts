@@ -1,5 +1,6 @@
 import { api } from "./api";
 import type { LoginResponse } from "./api-types";
+import { useUserStore } from "./store";
 
 export async function login(username: string, password: string): Promise<LoginResponse> {
   const res = await api.post<LoginResponse>("/auth/api/v1/auth/login", {
@@ -10,6 +11,9 @@ export async function login(username: string, password: string): Promise<LoginRe
   // Store token in cookie
   const isSecure = window.location.protocol === "https:";
   document.cookie = `access_token=${res.tokens.access_token}; path=/; max-age=${res.tokens.expires_in}; SameSite=Strict${isSecure ? "; Secure" : ""}`;
+
+  // Store user in Zustand
+  useUserStore.getState().setUser(res.user);
 
   return res;
 }

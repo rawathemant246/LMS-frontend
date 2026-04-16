@@ -4,6 +4,7 @@ import { Bell, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { logout } from "@/lib/auth";
+import { useUserStore } from "@/lib/store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,9 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export function TopBar() {
   const router = useRouter();
+  const user = useUserStore((s) => s.user);
+  const initials = user ? `${user.first_name[0]}${user.last_name[0]}` : "SA";
+  const displayName = user ? `${user.first_name} ${user.last_name}` : "Super Admin";
 
   function handleLogout() {
     logout();
@@ -81,17 +85,17 @@ export function TopBar() {
           >
             <Avatar size="sm">
               <AvatarFallback className="bg-[#4F46E5] text-white text-xs font-semibold">
-                HR
+                {initials}
               </AvatarFallback>
             </Avatar>
             <span className="hidden text-sm font-medium text-gray-700 md:block">
-              Hemant Rawat
+              {displayName}
             </span>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuLabel className="py-2">
-              <p className="text-sm font-semibold text-gray-900">Hemant Rawat</p>
+              <p className="text-sm font-semibold text-gray-900">{displayName}</p>
               <p className="text-xs text-gray-500">Super Admin</p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
