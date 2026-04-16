@@ -88,6 +88,16 @@ function CreateAcademicYearDialog() {
 
   const mutation = useCreateAcademicYear();
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      setLabel("");
+      setStartDate("");
+      setEndDate("");
+      setIsCurrent(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate(
@@ -105,7 +115,7 @@ function CreateAcademicYearDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button />}>
         <Plus className="h-4 w-4 mr-2" />
         Create Academic Year
@@ -174,6 +184,15 @@ function CreateClassDialog({ academicYearId }: { academicYearId: string }) {
 
   const mutation = useCreateClass();
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      setClassName("");
+      setClassOrder("");
+      setNepStage("");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate(
@@ -195,7 +214,7 @@ function CreateClassDialog({ academicYearId }: { academicYearId: string }) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button />}>
         <Plus className="h-4 w-4 mr-2" />
         Create Class
@@ -258,6 +277,14 @@ function CreateSectionDialog({ classId }: { classId: string }) {
 
   const mutation = useCreateSection();
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      setSectionName("");
+      setCapacity("");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate(
@@ -273,7 +300,7 @@ function CreateSectionDialog({ classId }: { classId: string }) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button size="sm" variant="outline" />}>
         <Plus className="h-4 w-4 mr-1" />
         Add Section
@@ -323,6 +350,15 @@ function CreateSubjectDialog() {
 
   const mutation = useCreateSubject();
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      setSubjectName("");
+      setSubjectCode("");
+      setCategory("");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate(
@@ -339,7 +375,7 @@ function CreateSubjectDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button />}>
         <Plus className="h-4 w-4 mr-2" />
         Create Subject

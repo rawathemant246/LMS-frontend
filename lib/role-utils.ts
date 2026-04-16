@@ -2,15 +2,20 @@ export function detectRole(roleId: number | null, roleName?: string): string {
   if (!roleId) return "unknown";
   if (roleName) {
     const lower = roleName.toLowerCase();
-    if (lower === "super_admin" || lower.includes("super")) return "super_admin";
-    if (lower.includes("principal") || lower.includes("admin")) return "admin";
-    if (lower.includes("teacher")) return "teacher";
-    if (lower.includes("student")) return "student";
-    if (lower.includes("parent")) return "parent";
-    if (lower.includes("accountant")) return "accountant";
+    const exactRoles: Record<string, string> = {
+      super_admin: "super_admin",
+      admin: "admin",
+      principal: "admin",
+      school_admin: "admin",
+      teacher: "teacher",
+      student: "student",
+      parent: "parent",
+      accountant: "accountant",
+    };
+    if (exactRoles[lower]) return exactRoles[lower];
   }
   if (roleId === 1) return "super_admin";
-  return "admin";
+  return "unknown";
 }
 
 export function getRoleDashboardPath(role: string): string {
@@ -20,7 +25,8 @@ export function getRoleDashboardPath(role: string): string {
     case "teacher": return "/teacher/dashboard";
     case "student": return "/student/dashboard";
     case "parent": return "/parent/dashboard";
-    default: return "/admin/dashboard";
+    case "unknown": return "/login"; // Force re-login or show error
+    default: return "/login";
   }
 }
 
