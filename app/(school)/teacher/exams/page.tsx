@@ -51,6 +51,7 @@ import {
   Save,
   GraduationCap,
 } from "lucide-react";
+import { extractArray } from "@/lib/utils";
 import {
   useTeacherProfile,
   useMySubjects,
@@ -73,14 +74,6 @@ import { useChapters } from "@/hooks/use-content";
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data?.data?.items) return data.data.items;
-  if (data?.data && Array.isArray(data.data)) return data.data;
-  if (data?.items) return data.items;
-  return [];
-}
 
 // ---------------------------------------------------------------------------
 // Animation variants

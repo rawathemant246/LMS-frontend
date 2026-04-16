@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,8 @@ import {
   RotateCcw,
   Search,
 } from "lucide-react";
+import { toast } from "sonner";
+import { extractArray } from "@/lib/utils";
 import { useTeacherProfile, useMyClasses } from "@/hooks/use-teacher-context";
 import {
   useSectionStudents,
@@ -36,14 +39,6 @@ import {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data?.data?.items) return data.data.items;
-  if (data?.data && Array.isArray(data.data)) return data.data;
-  if (data?.items) return data.items;
-  return [];
-}
 
 function todayISO(): string {
   return new Date().toISOString().split("T")[0];
@@ -308,12 +303,14 @@ function StudentAttendanceGrid({
   attendanceMap,
   onToggle,
   searchQuery,
+  hasExistingAttendance,
 }: {
   sectionId: string;
   selectedDate: string;
   attendanceMap: Record<string, AttendanceStatus>;
   onToggle: (studentId: string, status: AttendanceStatus) => void;
   searchQuery: string;
+  hasExistingAttendance: boolean;
 }) {
   const { data: studentsRaw, isLoading } = useSectionStudents(
     sectionId || undefined
@@ -333,9 +330,10 @@ function StudentAttendanceGrid({
     });
   }, [students, searchQuery]);
 
-  // Default all to present on load
+  // Default all to present on load — only when no existing attendance data
   useEffect(() => {
     if (students.length === 0) return;
+    if (hasExistingAttendance) return;
     students.forEach((s: any) => {
       const id = String(s.id ?? s.student_id ?? s.data?.id ?? "");
       if (id && !attendanceMap[id]) {
@@ -343,7 +341,7 @@ function StudentAttendanceGrid({
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [students]);
+  }, [students, hasExistingAttendance]);
 
   if (isLoading) {
     return (
@@ -580,9 +578,10 @@ export default function TeacherAttendancePage() {
     Record<string, AttendanceStatus>
   >({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [markedSections] = useState<Set<string>>(new Set());
+  const [markedSections, setMarkedSections] = useState<Set<string>>(new Set());
 
   // Data hooks
+  const queryClient = useQueryClient();
   const { data: teacher, isLoading: teacherLoading } = useTeacherProfile();
   const teacherId = teacher?.id;
   const myClasses = useMyClasses(teacherId);
@@ -594,24 +593,18 @@ export default function TeacherAttendancePage() {
     selectedDate || undefined
   );
 
-  // Pre-fill from existing attendance data
+  // Clear and re-populate from existing attendance data when section or data changes
   useEffect(() => {
-    if (!existingAttendance) return;
-    const records = extractArray(existingAttendance);
-    if (records.length === 0) return;
-    const map: Record<string, AttendanceStatus> = {};
-    records.forEach((r: any) => {
-      const sid = String(r.student_id ?? r.id ?? "");
-      const status = (r.status ?? "present") as AttendanceStatus;
-      if (sid) map[sid] = status;
+    if (!selectedSectionId) return;
+    const existing = extractArray(existingAttendance);
+    const newMap: Record<string, AttendanceStatus> = {};
+    existing.forEach((a: any) => {
+      const sid = String(a.student_id ?? a.id ?? "");
+      const status = (a.status ?? "present") as AttendanceStatus;
+      if (sid) newMap[sid] = status;
     });
-    setAttendanceMap(map);
-  }, [existingAttendance]);
-
-  // Reset map when section changes
-  useEffect(() => {
-    setAttendanceMap({});
-  }, [selectedSectionId]);
+    setAttendanceMap(newMap);
+  }, [selectedSectionId, existingAttendance]);
 
   // Students for count
   const { data: studentsRaw } = useSectionStudents(
@@ -648,7 +641,9 @@ export default function TeacherAttendancePage() {
       },
       {
         onSuccess: () => {
-          markedSections.add(selectedSectionId);
+          queryClient.invalidateQueries({ queryKey: ["attendance"] });
+          setMarkedSections(prev => new Set(prev).add(selectedSectionId));
+          toast.success("Attendance saved");
         },
       }
     );
@@ -789,6 +784,7 @@ export default function TeacherAttendancePage() {
               attendanceMap={attendanceMap}
               onToggle={handleStatusToggle}
               searchQuery={searchQuery}
+              hasExistingAttendance={existingAttendance ? extractArray(existingAttendance).length > 0 : false}
             />
 
             {students.length > 0 && (

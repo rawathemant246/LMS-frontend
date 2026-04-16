@@ -50,27 +50,22 @@ export function useGenerateQuiz() {
       class_level: number;
       marks_per_question: number;
     }) => {
-      // Try the content generation endpoint; fallback to tutor session
-      try {
-        return await api.post<any>("/api/v1/content/generate-questions", data);
-      } catch {
-        // Fallback: use tutor session
-        const session = await api.post<any>("/api/v1/tutor/sessions", {
-          subject: data.subject,
-          concept_name: data.topic,
-        });
-        const sessionId = session?.data?.id ?? session?.id;
-        const message = `Generate ${data.count} ${data.question_type} questions about "${data.topic}" from "${data.chapter}" in ${data.subject} for Class ${data.class_level}. Difficulty: ${data.difficulty}. Marks per question: ${data.marks_per_question}. Format as JSON array with fields: question_text, options (for MCQ), correct_answer, explanation.`;
-        const response = await api.post<any>(
-          `/api/v1/tutor/sessions/${sessionId}/messages`,
-          { content: message }
-        );
-        return {
-          text:
-            response?.data?.response_text ?? response?.response_text ?? "",
-          questions: [],
-        };
-      }
+      // Use tutor session for quiz generation (no dedicated endpoint yet)
+      const session = await api.post<any>("/api/v1/tutor/sessions", {
+        subject: data.subject,
+        concept_name: data.topic,
+      });
+      const sessionId = session?.data?.id ?? session?.id;
+      const message = `Generate ${data.count} ${data.question_type} questions about "${data.topic}" from "${data.chapter}" in ${data.subject} for Class ${data.class_level}. Difficulty: ${data.difficulty}. Marks per question: ${data.marks_per_question}. Format as JSON array with fields: question_text, options (for MCQ), correct_answer, explanation.`;
+      const response = await api.post<any>(
+        `/api/v1/tutor/sessions/${sessionId}/messages`,
+        { content: message }
+      );
+      return {
+        text:
+          response?.data?.response_text ?? response?.response_text ?? "",
+        questions: [],
+      };
     },
     onError: (err: Error) => toast.error(err.message),
   });

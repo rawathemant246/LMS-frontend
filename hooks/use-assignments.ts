@@ -63,10 +63,12 @@ export function useGradeSubmission() {
   });
 }
 
+// Note: /api/v1/rubrics endpoint — verify backend has this route before using
 export function useRubrics() {
   return useQuery({ queryKey: ["rubrics"], queryFn: () => api.get<any>("/api/v1/rubrics") });
 }
 
+// Note: /api/v1/rubrics endpoint — verify backend has this route before using
 export function useCreateRubric() {
   const qc = useQueryClient();
   return useMutation({

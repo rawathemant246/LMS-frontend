@@ -46,6 +46,7 @@ export function useStudentReportCards(studentId?: string) {
   });
 }
 
+// Consumer should call URL.revokeObjectURL(url) when done with the returned blob URL
 export function useReportCardPdf(reportCardId?: string) {
   return useQuery({
     queryKey: ["report-card-pdf", reportCardId],
@@ -55,6 +56,11 @@ export function useReportCardPdf(reportCardId?: string) {
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/report-cards/${reportCardId}/pdf`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      if (res.status === 401) {
+        document.cookie = "access_token=; path=/; max-age=0";
+        window.location.href = "/login";
+        throw new Error("Unauthorized");
+      }
       if (!res.ok) throw new Error("Failed to fetch PDF");
       return URL.createObjectURL(await res.blob());
     },

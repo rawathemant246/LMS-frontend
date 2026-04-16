@@ -43,20 +43,9 @@ import {
   useCreateLearningObject,
   useUploadDirect,
 } from "@/hooks/use-content";
-import { formatRelativeTime } from "@/lib/utils";
+import { formatRelativeTime, extractArray } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data?.data?.items) return data.data.items;
-  if (data?.data && Array.isArray(data.data)) return data.data;
-  if (data?.items) return data.items;
-  return [];
-}
-
 function getTypeIcon(type?: string) {
   switch (type?.toLowerCase()) {
     case "video":

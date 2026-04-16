@@ -58,19 +58,9 @@ import {
   useSubmissions,
   useGradeSubmission,
 } from "@/hooks/use-assignments";
+import { extractArray } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data?.data?.items) return data.data.items;
-  if (data?.data && Array.isArray(data.data)) return data.data;
-  if (data?.items) return data.items;
-  return [];
-}
-
 // ---------------------------------------------------------------------------
 // Animation variants
 // ---------------------------------------------------------------------------

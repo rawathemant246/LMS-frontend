@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, type Variants } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import {
   BookOpen,
   Sparkles,
 } from "lucide-react";
+import { extractArray } from "@/lib/utils";
 import {
   useTeacherProfile,
   useTeacherAssignments,
@@ -98,14 +99,6 @@ const JS_DAY_MAP: Record<number, string> = {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data?.data?.items) return data.data.items;
-  if (data?.data && Array.isArray(data.data)) return data.data;
-  if (data?.items) return data.items;
-  return [];
-}
 
 function formatTime(time: string): string {
   if (!time) return "";
@@ -281,14 +274,16 @@ function TimetableGrid({
   assignments,
   subjectIds,
   isLoading,
+  todayKey,
+  currentMinutes,
 }: {
   periods: any[];
   assignments: any[];
   subjectIds: string[];
   isLoading: boolean;
+  todayKey: string;
+  currentMinutes: number;
 }) {
-  const todayKey = getTodayDayKey();
-  const currentMinutes = getCurrentMinutes();
 
   // Build slot lookup: `${periodId}-${day}` -> assignment
   const slotMap = useMemo(() => {
@@ -678,6 +673,14 @@ function StatsCards({
 // ---------------------------------------------------------------------------
 
 export default function TeacherTimetablePage() {
+  // Hydration-safe date values
+  const [todayKey, setTodayKey] = useState("");
+  const [currentMinutes, setCurrentMinutes] = useState(0);
+  useEffect(() => {
+    setTodayKey(getTodayDayKey());
+    setCurrentMinutes(getCurrentMinutes());
+  }, []);
+
   // Data hooks
   const { data: teacher, isLoading: teacherLoading } = useTeacherProfile();
   const teacherId = teacher?.id;
@@ -770,6 +773,8 @@ export default function TeacherTimetablePage() {
         assignments={assignments}
         subjectIds={subjectIds}
         isLoading={isLoading}
+        todayKey={todayKey}
+        currentMinutes={currentMinutes}
       />
     </div>
   );

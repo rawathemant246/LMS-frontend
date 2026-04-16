@@ -44,20 +44,10 @@ import {
   useGenerateQuiz,
 } from "@/hooks/use-ai-assistant";
 import { useCreateQuestion } from "@/hooks/use-exams";
+import { extractArray } from "@/lib/utils";
 import { toast } from "sonner";
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data?.data?.items) return data.data.items;
-  if (data?.data && Array.isArray(data.data)) return data.data;
-  if (data?.items) return data.items;
-  return [];
-}
-
 // ---------------------------------------------------------------------------
 // Framer Motion variants
 // ---------------------------------------------------------------------------

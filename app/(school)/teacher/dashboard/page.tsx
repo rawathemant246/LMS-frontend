@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { extractArray } from "@/lib/utils";
 import {
   useTeacherProfile,
   useTeacherAssignments,
@@ -30,15 +31,6 @@ import {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function extractArray(data: unknown): any[] {
-  if (Array.isArray(data)) return data;
-  if ((data as any)?.data?.items) return (data as any).data.items;
-  if ((data as any)?.data && Array.isArray((data as any).data))
-    return (data as any).data;
-  if ((data as any)?.items) return (data as any).items;
-  return [];
-}
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -96,9 +88,13 @@ const fadeIn: Variants = {
 function WelcomeBanner({
   name,
   isLoading,
+  greeting,
+  todayLabel,
 }: {
   name: string;
   isLoading: boolean;
+  greeting: string;
+  todayLabel: string;
 }) {
   return (
     <motion.div
@@ -129,14 +125,14 @@ function WelcomeBanner({
         ) : (
           <>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-              {getGreeting()},{" "}
+              {greeting},{" "}
               <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text">
                 {name}
               </span>
             </h1>
             <p className="text-sm md:text-base text-white/70 font-medium">
               <CalendarDays className="inline-block h-4 w-4 mr-1.5 -mt-0.5" />
-              {getTodayLabel()}
+              {todayLabel}
             </p>
           </>
         )}
@@ -442,6 +438,14 @@ function QuickActions() {
 // ---------------------------------------------------------------------------
 
 export default function TeacherDashboardPage() {
+  // --- Hydration-safe date values ---
+  const [greeting, setGreeting] = useState("Welcome");
+  const [todayLabel, setTodayLabel] = useState("");
+  useEffect(() => {
+    setGreeting(getGreeting());
+    setTodayLabel(getTodayLabel());
+  }, []);
+
   // --- Data hooks ---
   const { data: teacher, isLoading: teacherLoading } = useTeacherProfile();
   const teacherId = teacher?.id;
@@ -605,7 +609,7 @@ export default function TeacherDashboardPage() {
   return (
     <div className="max-w-7xl mx-auto">
       {/* Welcome Banner */}
-      <WelcomeBanner name={teacherName || "Teacher"} isLoading={teacherLoading} />
+      <WelcomeBanner name={teacherName || "Teacher"} isLoading={teacherLoading} greeting={greeting} todayLabel={todayLabel} />
 
       {/* KPI Cards */}
       <KpiCards items={kpis} isLoading={isLoading} />

@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 
+// Note: /admin/notifications routes are scoped by user_id from JWT claims,
+// not restricted to admin role. The "admin" prefix is a backend route namespace.
 export function useNotifications() {
   return useQuery({
     queryKey: ["notifications"],
@@ -10,6 +12,8 @@ export function useNotifications() {
   });
 }
 
+// Note: /admin/notifications routes are scoped by user_id from JWT claims,
+// not restricted to admin role. The "admin" prefix is a backend route namespace.
 export function useMarkNotificationRead() {
   const qc = useQueryClient();
   return useMutation({
@@ -19,6 +23,8 @@ export function useMarkNotificationRead() {
   });
 }
 
+// Note: /admin/notifications routes are scoped by user_id from JWT claims,
+// not restricted to admin role. The "admin" prefix is a backend route namespace.
 export function useMarkAllNotificationsRead() {
   const qc = useQueryClient();
   return useMutation({

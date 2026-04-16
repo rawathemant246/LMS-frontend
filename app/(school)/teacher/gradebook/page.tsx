@@ -48,9 +48,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import { extractArray } from "@/lib/utils";
 import {
   useTeacherProfile,
   useMyClasses,
+  useMySubjects,
   useTeacherAssignments,
 } from "@/hooks/use-teacher-context";
 import { useExams, useExam, useExamResults, useBulkMarks } from "@/hooks/use-exams";
@@ -60,14 +62,6 @@ import { useSectionStudents } from "@/hooks/use-attendance";
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data?.data?.items) return data.data.items;
-  if (data?.data && Array.isArray(data.data)) return data.data;
-  if (data?.items) return data.items;
-  return [];
-}
 
 function getGrade(total: number, maxTotal: number, entries: any[]): string {
   if (maxTotal === 0) return "\u2014";
@@ -184,7 +178,7 @@ function PageBanner() {
 // TAB 1 -- Marks Entry (same as admin, pre-filtered to teacher's exams)
 // ---------------------------------------------------------------------------
 
-function MarksEntryTab({ sectionIds }: { sectionIds: string[] }) {
+function MarksEntryTab({ sectionIds, mySubjectIds }: { sectionIds: string[]; mySubjectIds: Set<string> }) {
   const [selectedExamId, setSelectedExamId] = useState("");
   const [marks, setMarks] = useState<Record<string, Record<string, number>>>({});
   const [savedCells, setSavedCells] = useState<Set<string>>(new Set());
@@ -192,6 +186,11 @@ function MarksEntryTab({ sectionIds }: { sectionIds: string[] }) {
 
   const { data: examsData } = useExams();
   const allExams = extractArray(examsData);
+  // Filter exams to only include those matching teacher's subject IDs
+  const teacherExams = useMemo(() => {
+    if (mySubjectIds.size === 0) return allExams;
+    return allExams.filter((e: any) => mySubjectIds.has(String(e.subject_id ?? "")));
+  }, [allExams, mySubjectIds]);
 
   const { data: examData } = useExam(selectedExamId || undefined);
   const { data: resultsData, isLoading: resultsLoading } = useExamResults(selectedExamId || undefined);
@@ -328,7 +327,7 @@ function MarksEntryTab({ sectionIds }: { sectionIds: string[] }) {
             <SelectValue placeholder="Select Exam" />
           </SelectTrigger>
           <SelectContent>
-            {allExams.map((e: any) => (
+            {teacherExams.map((e: any) => (
               <SelectItem key={e.exam_id ?? e.id} value={String(e.exam_id ?? e.id)}>
                 {e.name ?? e.title ?? "Exam"}
               </SelectItem>
@@ -822,6 +821,11 @@ function ReportCardsTab({ sections }: { sections: any[] }) {
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/report-cards/${reportCardId}/pdf`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      if (res.status === 401) {
+        document.cookie = "access_token=; path=/; max-age=0";
+        window.location.href = "/login";
+        return;
+      }
       if (!res.ok) throw new Error("Download failed");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -945,6 +949,12 @@ export default function TeacherGradebookPage() {
   const { data: teacher } = useTeacherProfile();
   const teacherId = teacher?.id;
   const myClasses = useMyClasses(teacherId);
+  const mySubjects = useMySubjects(teacherId);
+
+  const mySubjectIds = useMemo(
+    () => new Set<string>(mySubjects.map((s: any) => String(s.subject_id ?? s.id ?? ""))),
+    [mySubjects]
+  );
 
   const sections = useMemo(() => {
     return myClasses.map((c: any) => ({
@@ -974,7 +984,7 @@ export default function TeacherGradebookPage() {
         <AnimatePresence mode="wait">
           <TabsContent value="marks-entry">
             <motion.div key="marks-tab" variants={tabFade} initial="initial" animate="animate" exit="exit">
-              <MarksEntryTab sectionIds={sectionIds} />
+              <MarksEntryTab sectionIds={sectionIds} mySubjectIds={mySubjectIds} />
             </motion.div>
           </TabsContent>
 

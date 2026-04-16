@@ -6,15 +6,21 @@ import { useUserStore } from "@/lib/store";
 
 export function useTeacherProfile() {
   const user = useUserStore((s) => s.user);
-  const userId = (user as any)?.user_id ?? (user as any)?.id;
+  const userId = (user as any)?.user_id ?? (user as any)?.id ?? (user as any)?.username;
   return useQuery({
     queryKey: ["teacher-profile", userId],
     queryFn: async () => {
+      // No /teachers/me endpoint exists; fetch list and match by auth_user_id
       const data = await api.get<any>("/api/v1/teachers");
       const teachers = Array.isArray(data) ? data : data?.data?.items ?? data?.data ?? data?.items ?? [];
-      return teachers.find((t: any) => t.auth_user_id === userId) ?? null;
+      return teachers.find((t: any) =>
+        t.auth_user_id === userId ||
+        t.user_id === userId ||
+        String(t.auth_user_id) === String(userId)
+      ) ?? null;
     },
     enabled: !!userId,
+    staleTime: 5 * 60 * 1000, // Cache for 5 min to avoid repeated fetches
   });
 }
 

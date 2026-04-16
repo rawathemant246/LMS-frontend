@@ -11,6 +11,7 @@ import {
   useTeacherAssignments,
 } from "@/hooks/use-teacher-context";
 import { useSectionStudents } from "@/hooks/use-attendance";
+import { extractArray } from "@/lib/utils";
 import {
   BookOpen,
   Users,
@@ -27,18 +28,6 @@ import {
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function extractArray(data: unknown): any[] {
-  if (Array.isArray(data)) return data;
-  if ((data as any)?.data?.items) return (data as any).data.items;
-  if ((data as any)?.data && Array.isArray((data as any).data))
-    return (data as any).data;
-  if ((data as any)?.items) return (data as any).items;
-  return [];
-}
-
 // Gradient accent colors per subject — cycles through a curated palette
 const SUBJECT_GRADIENTS = [
   { from: "from-indigo-500", to: "to-violet-500", bg: "bg-indigo-500/10", text: "text-indigo-600", ring: "ring-indigo-500/20", glow: "bg-indigo-400" },
