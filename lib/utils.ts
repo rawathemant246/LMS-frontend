@@ -5,6 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function extractArray(data: any): any[] {
+  if (Array.isArray(data)) return data;
+  if (data?.data?.items) return data.data.items;
+  if (data?.data && Array.isArray(data.data)) return data.data;
+  if (data?.items) return data.items;
+  return [];
+}
+
 export function formatCurrency(amount: number): string {
   if (amount >= 100000) {
     return `₹${(amount / 100000).toFixed(1)}L`;

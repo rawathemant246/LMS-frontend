@@ -50,9 +50,13 @@ export const TEACHER_NAV: NavSection[] = [
     { name: "Exams", href: "/teacher/exams", icon: "FileText" },
     { name: "Gradebook", href: "/teacher/gradebook", icon: "BarChart3" },
   ]},
-  { section: "AI", items: [
+  { section: "INSIGHTS", items: [
+    { name: "Student Insights", href: "/teacher/insights", icon: "TrendingUp" },
     { name: "AI Assistant", href: "/teacher/ai-assistant", icon: "Brain" },
+  ]},
+  { section: "COMMUNICATION", items: [
     { name: "Announcements", href: "/teacher/announcements", icon: "Megaphone" },
+    { name: "Notifications", href: "/teacher/notifications", icon: "Bell" },
   ]},
 ];
 
