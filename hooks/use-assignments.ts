@@ -77,3 +77,17 @@ export function useCreateRubric() {
     onError: (err: Error) => toast.error(err.message),
   });
 }
+
+export function useSubmitAssignment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ assignmentId, data }: { assignmentId: string; data: any }) =>
+      api.post(`/api/v1/assignments/${assignmentId}/submit`, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["assignments"] });
+      qc.invalidateQueries({ queryKey: ["submissions"] });
+      toast.success("Assignment submitted");
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}

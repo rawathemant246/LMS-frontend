@@ -69,10 +69,16 @@ export const STUDENT_NAV: NavSection[] = [
     { name: "Content", href: "/student/content", icon: "PlayCircle" },
     { name: "Assignments", href: "/student/assignments", icon: "PenTool" },
     { name: "Exams", href: "/student/exams", icon: "FileText" },
+    { name: "Timetable", href: "/student/timetable", icon: "Calendar" },
   ]},
-  { section: "AI", items: [
+  { section: "AI & PROGRESS", items: [
     { name: "AI Tutor", href: "/student/tutor", icon: "Brain" },
     { name: "My Progress", href: "/student/progress", icon: "TrendingUp" },
+    { name: "Report Cards", href: "/student/report-cards", icon: "Award" },
+  ]},
+  { section: "COMMUNICATION", items: [
+    { name: "Announcements", href: "/student/announcements", icon: "Megaphone" },
+    { name: "Notifications", href: "/student/notifications", icon: "Bell" },
   ]},
 ];
 
