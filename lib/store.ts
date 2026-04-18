@@ -3,11 +3,14 @@ import { persist } from "zustand/middleware";
 
 interface UserState {
   user: {
+    user_id: number;
     first_name: string;
     last_name: string;
     username: string;
     email: string;
     role_id: number;
+    organization_id: number;
+    status: string;
   } | null;
   setUser: (user: UserState["user"]) => void;
   clearUser: () => void;
