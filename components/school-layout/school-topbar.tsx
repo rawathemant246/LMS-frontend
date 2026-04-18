@@ -24,7 +24,7 @@ export function SchoolTopbar() {
   const school = useSchoolStore((s) => s.school);
   const role = useSchoolStore((s) => s.role);
 
-  const initials = user ? `${user.first_name[0]}${user.last_name[0]}` : "U";
+  const initials = user ? `${(user.first_name || "U")[0]}${(user.last_name || "")[0]}` : "U";
   const displayName = user ? `${user.first_name} ${user.last_name}` : "User";
   const roleName = role
     ? role.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
