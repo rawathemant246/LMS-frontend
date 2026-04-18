@@ -6,7 +6,7 @@ import { useUserStore } from "@/lib/store";
 
 export function useTeacherProfile() {
   const user = useUserStore((s) => s.user);
-  const userId = (user as any)?.user_id ?? (user as any)?.id ?? (user as any)?.username;
+  const userId = user?.user_id;
   return useQuery({
     queryKey: ["teacher-profile", userId],
     queryFn: async () => {

@@ -24,6 +24,8 @@ import {
   TrendingUp,
   MessageSquare,
   Zap,
+  Bell,
+  Award,
 } from "lucide-react";
 
 import { useSchoolStore } from "@/lib/school-store";
@@ -65,6 +67,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   PlayCircle,
   TrendingUp,
   MessageSquare,
+  Bell,
+  Award,
 };
 
 export function SchoolSidebar() {

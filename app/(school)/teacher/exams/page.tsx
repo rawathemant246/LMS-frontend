@@ -378,7 +378,7 @@ function MyExamsTab({ subjectIds, subjects }: { subjectIds: string[]; subjects: 
     <div>
       {/* Filter bar */}
       <div className="flex items-center gap-3 mb-5 flex-wrap">
-        <Select value={filterSubject} onValueChange={(val) => setFilterSubject(val ?? "")}>
+        <Select value={filterSubject} onValueChange={(val) => setFilterSubject(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="All Subjects" />
           </SelectTrigger>
@@ -395,7 +395,7 @@ function MyExamsTab({ subjectIds, subjects }: { subjectIds: string[]; subjects: 
           </SelectContent>
         </Select>
 
-        <Select value={filterStatus} onValueChange={(val) => setFilterStatus(val ?? "")}>
+        <Select value={filterStatus} onValueChange={(val) => setFilterStatus(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
@@ -818,7 +818,7 @@ function QuestionBankTab({ subjectIds, subjects }: { subjectIds: string[]; subje
       <div className="flex items-center gap-3 mb-5 flex-wrap">
         <Select
           value={filterSubjectId}
-          onValueChange={(val) => { setFilterSubjectId(val ?? ""); setFilterChapterId(""); }}
+          onValueChange={(val) => { setFilterSubjectId(val === "all" ? "" : val ?? ""); setFilterChapterId(""); }}
         >
           <SelectTrigger className="w-44">
             <SelectValue placeholder="All My Subjects" />
@@ -838,7 +838,7 @@ function QuestionBankTab({ subjectIds, subjects }: { subjectIds: string[]; subje
 
         <Select
           value={filterChapterId}
-          onValueChange={(val) => setFilterChapterId(val ?? "")}
+          onValueChange={(val) => setFilterChapterId(val === "all" ? "" : val ?? "")}
           disabled={!filterSubjectId}
         >
           <SelectTrigger className="w-40">
@@ -857,7 +857,7 @@ function QuestionBankTab({ subjectIds, subjects }: { subjectIds: string[]; subje
           </SelectContent>
         </Select>
 
-        <Select value={filterType} onValueChange={(val) => setFilterType(val ?? "")}>
+        <Select value={filterType} onValueChange={(val) => setFilterType(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="All Types" />
           </SelectTrigger>
@@ -871,7 +871,7 @@ function QuestionBankTab({ subjectIds, subjects }: { subjectIds: string[]; subje
           </SelectContent>
         </Select>
 
-        <Select value={filterDifficulty} onValueChange={(val) => setFilterDifficulty(val ?? "")}>
+        <Select value={filterDifficulty} onValueChange={(val) => setFilterDifficulty(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-32">
             <SelectValue placeholder="All Levels" />
           </SelectTrigger>

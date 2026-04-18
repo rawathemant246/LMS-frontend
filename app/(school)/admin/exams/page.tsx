@@ -62,7 +62,7 @@ import {
   useCreateQuestion,
   useVerifyQuestion,
 } from "@/hooks/use-exams";
-import { useClasses, useSubjects } from "@/hooks/use-academic";
+import { useAcademicYears, useClasses, useSubjects } from "@/hooks/use-academic";
 import { useChapters } from "@/hooks/use-content";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -305,7 +305,11 @@ function ExamsTab() {
   const { data: examsData, isLoading: examsLoading } = useExams();
   const exams = extractArray(examsData);
 
-  const { data: classesData } = useClasses();
+  const { data: yearsData } = useAcademicYears();
+  const years = extractArray(yearsData);
+  const currentYearId = years.length > 0 ? String(years[0].academic_year_id ?? years[0].id ?? "") : undefined;
+
+  const { data: classesData } = useClasses(currentYearId);
   const classes = extractArray(classesData);
 
   const { data: subjectsData } = useSubjects();
@@ -351,7 +355,7 @@ function ExamsTab() {
     <div>
       {/* Filter bar */}
       <div className="flex items-center gap-3 mb-4 flex-wrap">
-        <Select value={filterClass} onValueChange={(val) => setFilterClass(val ?? "")}>
+        <Select value={filterClass} onValueChange={(val) => setFilterClass(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="All Classes" />
           </SelectTrigger>
@@ -368,7 +372,7 @@ function ExamsTab() {
           </SelectContent>
         </Select>
 
-        <Select value={filterSubject} onValueChange={(val) => setFilterSubject(val ?? "")}>
+        <Select value={filterSubject} onValueChange={(val) => setFilterSubject(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="All Subjects" />
           </SelectTrigger>
@@ -385,7 +389,7 @@ function ExamsTab() {
           </SelectContent>
         </Select>
 
-        <Select value={filterStatus} onValueChange={(val) => setFilterStatus(val ?? "")}>
+        <Select value={filterStatus} onValueChange={(val) => setFilterStatus(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
@@ -818,7 +822,7 @@ function QuestionBankTab() {
         <Select
           value={filterSubjectId}
           onValueChange={(val) => {
-            setFilterSubjectId(val ?? "");
+            setFilterSubjectId(val === "all" ? "" : val ?? "");
             setFilterChapterId("");
           }}
         >
@@ -840,7 +844,7 @@ function QuestionBankTab() {
 
         <Select
           value={filterChapterId}
-          onValueChange={(val) => setFilterChapterId(val ?? "")}
+          onValueChange={(val) => setFilterChapterId(val === "all" ? "" : val ?? "")}
           disabled={!filterSubjectId}
         >
           <SelectTrigger className="w-40">
@@ -859,7 +863,7 @@ function QuestionBankTab() {
           </SelectContent>
         </Select>
 
-        <Select value={filterType} onValueChange={(val) => setFilterType(val ?? "")}>
+        <Select value={filterType} onValueChange={(val) => setFilterType(val === "all" ? "" : val ?? "")}>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="All Types" />
           </SelectTrigger>
@@ -877,7 +881,7 @@ function QuestionBankTab() {
 
         <Select
           value={filterDifficulty}
-          onValueChange={(val) => setFilterDifficulty(val ?? "")}
+          onValueChange={(val) => setFilterDifficulty(val === "all" ? "" : val ?? "")}
         >
           <SelectTrigger className="w-32">
             <SelectValue placeholder="All Levels" />

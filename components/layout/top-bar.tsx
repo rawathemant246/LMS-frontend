@@ -20,7 +20,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 export function TopBar() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
-  const initials = user ? `${user.first_name[0]}${user.last_name[0]}` : "SA";
+  const initials = user ? `${(user.first_name || "S")[0]}${(user.last_name || "A")[0]}` : "SA";
   const displayName = user ? `${user.first_name} ${user.last_name}` : "Super Admin";
 
   function handleLogout() {

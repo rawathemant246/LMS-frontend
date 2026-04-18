@@ -373,7 +373,7 @@ function MarksEntryTab() {
           </SelectContent>
         </Select>
 
-        <Select value={selectedClassId} onValueChange={(val) => { setSelectedClassId(val ?? ""); setSelectedSectionId(""); }}>
+        <Select value={selectedClassId} onValueChange={(val) => { setSelectedClassId(val === "all" ? "" : val ?? ""); setSelectedSectionId(""); }}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="All Classes" />
           </SelectTrigger>
@@ -387,7 +387,7 @@ function MarksEntryTab() {
           </SelectContent>
         </Select>
 
-        <Select value={selectedSectionId} onValueChange={(val) => setSelectedSectionId(val ?? "")} disabled={!selectedClassId}>
+        <Select value={selectedSectionId} onValueChange={(val) => setSelectedSectionId(val === "all" ? "" : val ?? "")} disabled={!selectedClassId}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="All Sections" />
           </SelectTrigger>
